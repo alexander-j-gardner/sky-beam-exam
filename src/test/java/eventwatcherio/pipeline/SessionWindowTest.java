@@ -35,7 +35,7 @@ import java.util.Iterator;
 public class SessionWindowTest implements Serializable {
 
     private final transient EventWatchOptions options = PipelineOptionsFactory.fromArgs(
-            "--textFilePath=/Users/alexandergardner/Documents/DataFlowPOC/SteveCode/event-load-job/src/resources/video-stream-events.txt",
+            "--textFilePath=/Users/alexandergardner/Documents/github-projects/sky-beam-exam/src/main/resources/video-stream-events.txt",
             "--pubsubTopic=DummyTopic",
             "--minSessionDurationSeconds=70",
             "--maxSessionDurationSeconds=100",
