@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
 
 
 public class VideoStreamEventsPublisher {
@@ -32,7 +31,7 @@ public class VideoStreamEventsPublisher {
                 .apply("Prepare message", MapElements.via(new VideoStreamEventToPubsubMapper()))
                 .apply("publish message",
                         PubsubIO.writeMessages()
-                                .to(options.getPubsubTopic()) //"projects/crucial-module-223618/topics/events-topic")
+                                .to(options.getVideoEventsPubsubTopic()) //"projects/crucial-module-223618/topics/events-topic")
 //                                .to("projects/sky-project/topics/video-events")
                                 .withTimestampAttribute("eventTimestampMillis")
                 );

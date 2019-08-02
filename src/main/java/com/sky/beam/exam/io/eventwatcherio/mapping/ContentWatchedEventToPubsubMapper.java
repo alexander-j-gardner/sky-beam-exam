@@ -1,6 +1,6 @@
 package com.sky.beam.exam.io.eventwatcherio.mapping;
 
-import com.sky.beam.exam.io.eventwatcherio.event.VideoStreamEvent;
+import com.sky.beam.exam.io.eventwatcherio.event.ContentWatchedEvent;
 import org.apache.avro.Schema;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.beam.sdk.coders.AvroCoder;
@@ -14,16 +14,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VideoStreamEventToPubsubMapper extends SimpleFunction<VideoStreamEvent, PubsubMessage> {
-    private static final Logger logger = LoggerFactory.getLogger(VideoStreamEventToPubsubMapper.class);
-    private static final Schema avroSchema = ReflectData.get().getSchema(VideoStreamEvent.class);
+public class ContentWatchedEventToPubsubMapper extends SimpleFunction<ContentWatchedEvent, PubsubMessage> {
+    private static final Logger logger = LoggerFactory.getLogger(ContentWatchedEventToPubsubMapper.class);
+    private static final Schema avroSchema = ReflectData.get().getSchema(ContentWatchedEvent.class);
     private final AvroCoder coder = AvroCoder.of(avroSchema);
 
-    public VideoStreamEventToPubsubMapper() { }
+    public ContentWatchedEventToPubsubMapper() { }
 
 
     @Override
-    public PubsubMessage apply(VideoStreamEvent event){
+    public PubsubMessage apply(ContentWatchedEvent event){
 
         try {
             PubsubMessage message = buildMessageForEvent(event);
@@ -32,28 +32,26 @@ public class VideoStreamEventToPubsubMapper extends SimpleFunction<VideoStreamEv
 
             return message;
         } catch (Exception e) {
-            logger.error("FAILED TO CREATE MESSAGE for SESSION" + event.getSessionId(), e);
+            logger.error("FAILED TO CREATE MESSAGE: " + event, e);
             return null;
         }
 
     }
 
-    private PubsubMessage buildMessageForEvent(VideoStreamEvent event) throws RuntimeException {
+    private PubsubMessage buildMessageForEvent(ContentWatchedEvent event) throws RuntimeException {
 
         try {
             Map<String, String> attributes = new HashMap<>();
-            attributes.put("sessionId", event.getSessionId());
-            attributes.put("eventTimestampStr", event.getEventTimestampStr());
             attributes.put("eventTimestampMillis", event.getEventTimestampMillis());
-            logger.info("Event to be converter: {}", event);
+            logger.info("Event to be converted to pubsub msg: {}", event);
 
             return new PubsubMessage(objToByte(event), attributes);
         } catch (Exception e) {
-            throw new RuntimeException("Failure serialising event object ready for publishing to Pubsub: " + event.getSessionId());
+            throw new RuntimeException("Failure serialising object ready for publishing to Pubsub: " + event);
         }
     }
 
-    public static byte[] objToByte(VideoStreamEvent event) throws IOException {
+    public static byte[] objToByte(ContentWatchedEvent event) throws IOException {
 
         byte[] data = SerializationUtils.serialize(event);
 

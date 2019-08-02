@@ -36,7 +36,8 @@ public class SessionWindowTest implements Serializable {
 
     private final transient EventWatchOptions options = PipelineOptionsFactory.fromArgs(
             "--textFilePath=/Users/alexandergardner/Documents/github-projects/sky-beam-exam/src/main/resources/video-stream-events.txt",
-            "--pubsubTopic=DummyTopic",
+            "--videoEventsPubsubTopic=DummyTopic",
+            "--contentWatchedEventsPubsubTopic=DummyTopic",
             "--minSessionDurationSeconds=70",
             "--maxSessionDurationSeconds=100",
             "--maxWindowSessionDurationSeconds=70"

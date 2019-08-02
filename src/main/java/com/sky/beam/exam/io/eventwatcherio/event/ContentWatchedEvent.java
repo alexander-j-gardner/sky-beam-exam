@@ -1,6 +1,7 @@
 package com.sky.beam.exam.io.eventwatcherio.event;
 
 import com.sky.beam.exam.io.eventwatcherio.emitter.CompletedSession;
+import com.sky.beam.exam.io.eventwatcherio.parser.JavaTimeParser;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -15,6 +16,7 @@ public class ContentWatchedEvent implements Serializable {
     private String userId;
     private String contentId;
     private Duration timeWatched;
+    private String eventTimestampMillis;
 
     public ContentWatchedEvent() {}
 
@@ -23,6 +25,7 @@ public class ContentWatchedEvent implements Serializable {
         this.userId = userId;
         this.contentId = contentId;
         this.timeWatched = timeWatched;
+        this.eventTimestampMillis = String.valueOf(JavaTimeParser.convertOffsetDateTimeToJodaInstant(startTimestamp).getMillis());
     }
 
     public OffsetDateTime getStartTimestamp() {
@@ -42,6 +45,14 @@ public class ContentWatchedEvent implements Serializable {
 
     public Duration getTimeWatched() {
         return timeWatched;
+    }
+
+    public String getEventTimestampMillis() {
+        return eventTimestampMillis;
+    }
+
+    public void setEventTimestampMillis(String eventTimestampMillis) {
+        this.eventTimestampMillis = eventTimestampMillis;
     }
 
     public static ContentWatchedEvent create(OffsetDateTime startTimestamp, String userId, String contentId, Duration timeWatched) {

@@ -5,7 +5,9 @@ import com.sky.beam.exam.io.eventwatcherio.emitter.ContentWatcherEmitterFN;
 import com.sky.beam.exam.io.eventwatcherio.event.ContentWatchedEvent;
 import com.sky.beam.exam.io.eventwatcherio.event.VideoStreamEvent;
 import com.sky.beam.exam.io.eventwatcherio.event.validation.ContentWatchedEventValidator;
+import com.sky.beam.exam.io.eventwatcherio.mapping.ContentWatchedEventToPubsubMapper;
 import com.sky.beam.exam.io.eventwatcherio.mapping.PubsubToVideoStreamEventMapper;
+import com.sky.beam.exam.io.eventwatcherio.mapping.VideoStreamEventToPubsubMapper;
 import com.sky.beam.exam.io.eventwatcherio.options.EventWatchOptions;
 import com.sky.beam.exam.io.eventwatcherio.window.session.KeyedStreamFn;
 import com.sky.beam.exam.io.logio.LogIO;
@@ -41,7 +43,7 @@ public class VideoStreamEventsConsumer {
 
         pipeline.apply("Read video events from Pubsub",
                 PubsubIO.readMessagesWithAttributes()
-                        .fromTopic(options.getPubsubTopic())  //"projects/crucial-module-223618/topics/events-topic")  c("projects/sky-project/topics/video-events")
+                        .fromTopic(options.getVideoEventsPubsubTopic())  //"projects/crucial-module-223618/topics/events-topic")  ("projects/sky-project/topics/video-events")
                     .withTimestampAttribute("eventTimestampMillis"))
                 .apply("Map Pubsub msg to VideoStreamEvent", MapElements.via(new PubsubToVideoStreamEventMapper()))
                 .apply("Add timestamps", WithTimestamps.<VideoStreamEvent>of((VideoStreamEvent event) -> {
@@ -53,7 +55,13 @@ public class VideoStreamEventsConsumer {
                 .apply(GroupByKey.create())
                 .apply("Emit ContentWatchedEvents", ParDo.of(new ContentWatcherEmitterFN(
                         new ContentWatcherEmitter(new ContentWatchedEventValidator(options.getMinSessionDurationSeconds(), options.getMaxSessionDurationSeconds())))))
-                .apply(new LogIO.Write<ContentWatchedEvent>());
+                .apply("Prepare message", MapElements.via(new ContentWatchedEventToPubsubMapper()))
+                .apply("publish ContentWatchedEvent message",
+                        PubsubIO.writeMessages()
+                                .to(options.getContentWatchedEventsPubsubTopic()) //"projects/crucial-module-223618/topics/events-topic")
+//                                .to("projects/sky-project/topics/video-events")
+                                .withTimestampAttribute("eventTimestampMillis"));
+//                .apply(new LogIO.Write<ContentWatchedEvent>());
 
          pipeline.run();
     }

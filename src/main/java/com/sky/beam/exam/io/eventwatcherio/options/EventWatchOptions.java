@@ -14,8 +14,13 @@ public interface EventWatchOptions extends PipelineOptions {
 
     @Description("DATAFLOW Pubsub topic for video events")
     @Validation.Required
-    String getPubsubTopic();
-    void setPubsubTopic(String value);
+    String getVideoEventsPubsubTopic();
+    void setVideoEventsPubsubTopic(String value);
+
+    @Description("DATAFLOW Pubsub topic for video events")
+    @Validation.Required
+    String getContentWatchedEventsPubsubTopic();
+    void setContentWatchedEventsPubsubTopic(String value);
 
     @Description("Minimum Session Duration Time in seconds")
     @Validation.Required
