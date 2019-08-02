@@ -124,7 +124,7 @@ To run the pipeline that consumes events from the Video Stream Events topic, use
 - When using the DirectRunner using the local pubsub emulator the following program args are required:
 
 ```
---project=sky-project 
+--project=<LOCAL PUBSUB PROJECT NAME> 
 --textFilePath=/Users/alexandergardner/Documents/github-projects/sky-beam-exam/src/main/resources/video-stream-events.txt 
 --pubsubRootUrl=http://127.0.0.1:8085 
 --runner=DirectRunner 
