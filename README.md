@@ -87,6 +87,36 @@ mvn clean install
 There is currently no executable JAR; there are a number of java classes that need to be run to launch the BEAM jobs using Dataflow or Direct runners.
 
 
+### How to run the Pubsub EMULATOR
+
+- First install the pubsub emulator. See the following web link:
+
+```
+https://cloud.google.com/pubsub/docs/emulator
+```
+
+Install the components using this command:
+
+```
+glcoud components install pubsub-emulator
+```
+
+- To run the pubsub emulator, use the following command (replace the project name with your own):
+
+```
+gcloud beta emulators pubsub start --project=SkyProject
+```
+
+### How to successfully create topics on the pubsub emulator
+
+I have created a class called PubsubEmualtor which allows you to create topics; ensure the pubsub emulator is running first though! Just run this class specifying the topic name in the main() method.
+
+```
+    public static void main(String[] args) throws IOException {        
+	createTopic("content-events");
+    }
+```
+
 ### Running the Video Stream Event Consumer
 
 - When using the DirectRunner using the local pubsub emulator the following program args are required:
@@ -111,7 +141,7 @@ Change the textFilePath option to your own project's location.
 ```
 --textFilePath=/Users/alexandergardner/Documents/github-projects/sky-beam-exam/src/main/resources/video-stream-events.txt 
 --runner=DataflowRunner 
---project=crucial-module-223618 
+--project=<CLOUD PROJECT NAME>
 --stagingLocation=gs://beam-dataflow-poc-bucket/staging 
 --tempLocation=gs://beam-dataflow-poc-bucket/temp/ 
 --gcpTempLocation=gs://beam-dataflow-poc-bucket/temp/ 
@@ -120,8 +150,8 @@ Change the textFilePath option to your own project's location.
 --jobName=video-events-publisher 
 --region=europe-west1 
 --maxNumWorkers=1 
---videoEventsPubsubTopic=projects/crucial-module-223618/topics/events-topic 
---contentWatchedEventsPubsubTopic=projects/crucial-module-223618/topics/content-watched-events-topic 
+--videoEventsPubsubTopic=projects/<CLOUD PROJECT NAME>/topics/events-topic 
+--contentWatchedEventsPubsubTopic=projects/<CLOUD PROJECT NAME>/topics/content-watched-events-topic 
 --minSessionDurationSeconds=70 
 --maxSessionDurationSeconds=100 
 --maxWindowSessionDurationSeconds=70
@@ -129,6 +159,6 @@ Change the textFilePath option to your own project's location.
 
 ## Improvements
 
-- I had difficulty getting either PubsubIO to serialize the VideoStreamEvent using AVRO
-- I tried to use fasterxml's AvroMapper or simply used the AvroCoder but ultimately this led to various errors that I didn't solve (yet!). In previous projects I used custom Coders to serialise non-serialisable objects. 
+- I had difficulty getting PubsubIO to serialize the VideoStreamEvent using AVRO
+- I tried to use fasterxml's AvroMapper or simply used the BEAM AvroCoder but ultimately this led to various errors that I didn't solve (yet!). In previous projects I used custom Coders to serialise non-serialisable objects. 
 - Would add more Units to prove how many windows are emitted and how many events are contained within each window.
