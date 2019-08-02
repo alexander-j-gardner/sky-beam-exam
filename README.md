@@ -89,15 +89,46 @@ There is currently no executable JAR; there are a number of java classes that ne
 
 ### Running the Video Stream Event Consumer
 
-- When running in Direct mode using the local pubsub emulator the following program args are required:
+- When using the DirectRunner using the local pubsub emulator the following program args are required:
 
 ```
---project=sky-project --textFilePath=/Users/alexandergardner/Documents/DataFlowPOC/SteveCode/event-load-job/src/resources/video-stream-events.txt --pubsubRootUrl=http://127.0.0.1:8085 --runner=DirectRunner --streaming=true
+--project=sky-project 
+--textFilePath=/Users/alexandergardner/Documents/github-projects/sky-beam-exam/src/main/resources/video-stream-events.txt 
+--pubsubRootUrl=http://127.0.0.1:8085 
+--runner=DirectRunner 
+--streaming=true
+--videoEventsPubsubTopic=projects/<LOCAL PUBSUB PROJECT NAME>/topics/<LOCAL PUBSUB EMULATOR VIDEO EVENTS TOPIC NAME>
+--contentWatchedEventsPubsubTopic=projects/<LOCAL PUBSUB PROJECT NAME>/topics/<LOCAL PUBSUB EMULATOR CONTENT WATCHED TOPIC NAME>
+--minSessionDurationSeconds=70 
+--maxSessionDurationSeconds=100 
+--maxWindowSessionDurationSeconds=70
 ```
 
+Change the textFilePath option to your own project's location.
+
+- When using the DataflowRunner (no pubsub emulator), the following program args are required: 
+
+```
+--textFilePath=/Users/alexandergardner/Documents/github-projects/sky-beam-exam/src/main/resources/video-stream-events.txt 
+--runner=DataflowRunner 
+--project=crucial-module-223618 
+--stagingLocation=gs://beam-dataflow-poc-bucket/staging 
+--tempLocation=gs://beam-dataflow-poc-bucket/temp/ 
+--gcpTempLocation=gs://beam-dataflow-poc-bucket/temp/ 
+--streaming=true 
+--defaultWorkerLogLevel=TRACE 
+--jobName=video-events-publisher 
+--region=europe-west1 
+--maxNumWorkers=1 
+--videoEventsPubsubTopic=projects/crucial-module-223618/topics/events-topic 
+--contentWatchedEventsPubsubTopic=projects/crucial-module-223618/topics/content-watched-events-topic 
+--minSessionDurationSeconds=70 
+--maxSessionDurationSeconds=100 
+--maxWindowSessionDurationSeconds=70
+```
 
 ## Improvements
 
 - I had difficulty getting either PubsubIO to serialize the VideoStreamEvent using AVRO
 - I tried to use fasterxml's AvroMapper or simply used the AvroCoder but ultimately this led to various errors that I didn't solve (yet!). In previous projects I used custom Coders to serialise non-serialisable objects. 
-- Would add more Units to prove that so 
+- Would add more Units to prove how many windows are emitted and how many events are contained within each window.
