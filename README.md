@@ -140,6 +140,8 @@ Change the textFilePath option to your own project's location.
 
 - When using the DataflowRunner (no pubsub emulator), the following program args are required: 
 
+NOTE, example values are shown for GCP related program args such as buckets, region etc
+
 ```
 --textFilePath=/Users/alexandergardner/Documents/github-projects/sky-beam-exam/src/main/resources/video-stream-events.txt 
 --runner=DataflowRunner 
