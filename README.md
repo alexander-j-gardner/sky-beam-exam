@@ -20,7 +20,7 @@ There are two jobs:
 
 - A job that reads events from a file and publishes them to a pubsub video stream events topic
 - A Job that reads video stream events from a pubsub topic and publishes content watched events to another sink, the content watched events topic
-- To get the Session winding working correctly I used a "timestamp" attribute so that pubsub could use the event's timestamp in the VideoStreamEvent POJO as the event time injected into the pipeline
+- To get the Session windowing working correctly I used a "timestamp" attribute so that pubsub could use the event's timestamp in the VideoStreamEvent POJO as the event time injected into the pipeline
 - The session windows are keyed on sessionId
 
 
@@ -119,6 +119,8 @@ I have created a class called PubsubEmualtor which allows you to create topics; 
 
 ### Running the Video Stream Event Consumer
 
+To run the pipeline that consumes events from the Video Stream Events topic, use the VideoStreamEventsConsumer class.
+
 - When using the DirectRunner using the local pubsub emulator the following program args are required:
 
 ```
@@ -156,6 +158,22 @@ Change the textFilePath option to your own project's location.
 --maxSessionDurationSeconds=100 
 --maxWindowSessionDurationSeconds=70
 ```
+
+- You will need to specify some Environment variables when running the VideoStreamEventsConsumer & VideoStreamEventsPublisher classes with DataflowRunner:
+
+GOOGLE_APPLICATION_CREDENTIALS=/Users/alexandergardner/Documents/DataFlowPOC/ServiceAccountKEY/<KEY>
+CLOUDSDK_PYTHON=/usr/local/Cellar/python@2/2.7.15_3/Frameworks/Python.framework/Versions/2.7/bin/python2.7
+
+Change any directories to your local dirs on your PC / Mac.
+
+
+### Running the Video Stream Event Publisher
+
+To run the pipeline that publishes events to the Video Stream Events topic, use the VideoStreamEventsPublisher class.
+
+Use the same parameters / environment variables as used for the VideoStreamEventsConsumer.
+
+
 
 ## Improvements
 
